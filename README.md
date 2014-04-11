@@ -1,20 +1,18 @@
-ND
-==
-work stuff
+Work stuff
 ==
 
-output all users on existing sytem to a file.
+Output all users on existing sytem to a file.
 
 ```bash
 cat /etc/passwd | awk -F: '{ print $1 }' > /home/justin/users.txt
 ```
 
-copy users.txt to new system
+Copy users.txt to new system
 ```bash
 scp /home/justin/users.txt justin@XXXX:/home/justin
 ```
 
-run bash script on new system
+Run bash script on new system
 ```bash
 #!/bin/bash
 
