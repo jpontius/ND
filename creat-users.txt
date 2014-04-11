@@ -1,6 +1,6 @@
 # output all users on existing sytem to a file.
 
-```bash
+```
  cat /etc/passwd | awk -F: '{ print $1 }' > /home/justin/users.txt
 ```
 
