@@ -24,8 +24,8 @@ Setup Custom OpenAFS Yum Repository
 /etc/yum.repos.d/OpenAFS.repo
 ```
 [openafs]
-name = OpenAFS 1.6.5 for RHEL $releasever - $basearch
-baseurl = http://www.openafs.org/dl/openafs/1.6.5/rhel$releasever/$basearch
+name = OpenAFS 1.6.7 for RHEL $releasever - $basearch
+baseurl = http://www.openafs.org/dl/openafs/1.6.7/rhel$releasever/$basearch
 enabled = 1
 protect = 0
 gpgcheck = 0
