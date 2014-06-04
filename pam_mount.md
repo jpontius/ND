@@ -75,7 +75,7 @@ edit /etc/pam.d/system-auth
 # This file is auto-generated.
 # User changes will be destroyed the next time authconfig is run.
 auth        required	  pam_env.so
-auth        optional	  pam_mount.so
+auth        optional	  pam_mount.so try_first_pass
 auth        sufficient    pam_unix.so use_first_pass
 auth        requisite     pam_succeed_if.so uid >= 500 quiet
 auth        sufficient    pam_krb5.so use_first_pass
@@ -89,12 +89,10 @@ account     required	  pam_permit.so
 password    requisite     pam_cracklib.so try_first_pass retry=3
 password    sufficient    pam_unix.so md5 shadow nullok try_first_pass use_authtok
 password    sufficient    pam_krb5.so use_authtok
-#password    optional	   pam_mount.so
-password    required	  pam_mount.so use_authtok shadow md5
 password    required	  pam_deny.so
 
 session     optional	  pam_keyinit.so revoke
-session     optional	  pam_mount.so use_authtok shadow md5
+session     optional	  pam_mount.so
 session     required	  pam_limits.so
 session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
 session     required	  pam_unix.so
