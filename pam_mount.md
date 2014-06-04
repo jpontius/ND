@@ -1,17 +1,19 @@
 #Get packages
 
 ##i386
-````http://elders.princeton.edu/data/puias/unsupported/5/i386/pam_mount-1.2-1.PU_IAS.5.i386.rpm
+````
+http://elders.princeton.edu/data/puias/unsupported/5/i386/pam_mount-1.2-1.PU_IAS.5.i386.rpm
 http://elders.princeton.edu/data/puias/unsupported/5/i386/libHX-1.25-1.PU_IAS.5.i386.rpm
 ````
 
 ##x64
-````http://elders.princeton.edu/data/puias/unsupported/5/x86_64/libHX-1.25-1.PU_IAS.5.x86_64.rpm
+````
+http://elders.princeton.edu/data/puias/unsupported/5/x86_64/libHX-1.25-1.PU_IAS.5.x86_64.rpm
 http://elders.princeton.edu/data/puias/unsupported/5/x86_64/pam_mount-1.2-1.PU_IAS.5.x86_64.rpm
 ````
 
-edit /etc/security/pam_mount.conf.xml
-````
+###edit /etc/security/pam_mount.conf.xml
+````xml
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE pam_mount SYSTEM "pam_mount.conf.xml.dtd">
 <!--
