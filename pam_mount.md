@@ -12,6 +12,11 @@ http://elders.princeton.edu/data/puias/unsupported/5/x86_64/libHX-1.25-1.PU_IAS.
 http://elders.princeton.edu/data/puias/unsupported/5/x86_64/pam_mount-1.2-1.PU_IAS.5.x86_64.rpm
 ````
 
+###Install perl-XML-Writer
+````
+yum -y install perl-XML-Writer
+````
+
 ####edit /etc/security/pam_mount.conf.xml
 ````xml
 <?xml version="1.0" encoding="utf-8" ?>
