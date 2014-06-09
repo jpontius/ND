@@ -77,34 +77,20 @@ options=workgroup="adnd",uid=%(USER),dir_mode=0777,file_mode=777 /> -->
 </pam_mount>
 
 ````
-edit /etc/pam.d/system-auth
+edit /etc/pam.d/gdm
 ````
 #%PAM-1.0
-# This file is auto-generated.
-# User changes will be destroyed the next time authconfig is run.
-auth        required	  pam_env.so
-auth        optional	  pam_mount.so try_first_pass
-auth        sufficient    pam_unix.so use_first_pass
-auth        requisite     pam_succeed_if.so uid >= 500 quiet
-auth        sufficient    pam_krb5.so use_first_pass
-auth        required	  pam_deny.so
-
-account     required	  pam_unix.so broken_shadow
-account     sufficient    pam_succeed_if.so uid < 500 quiet
-account     required	  pam_krb5.so use_authtok try_first_pass
-account     required	  pam_permit.so
-
-password    requisite     pam_cracklib.so try_first_pass retry=3
-password    sufficient    pam_unix.so md5 shadow nullok try_first_pass use_authtok
-password    sufficient    pam_krb5.so use_authtok
-password    required	  pam_deny.so
-
-session     optional	  pam_keyinit.so revoke
-session     optional	  pam_mount.so
-session     required	  pam_limits.so
-session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
-session     required	  pam_unix.so
-session     optional	  pam_krb5.so
+auth       required    pam_env.so
+auth       optional    pam_mount.so try_first_pass
+auth       include     system-auth
+account    required    pam_nologin.so
+account    include     system-auth
+password   include     system-auth
+session    optional    pam_keyinit.so force revoke
+session    include     system-auth
+session    required    pam_loginuid.so
+session    optional    pam_console.so
+session    optional    pam_mount.so try_first_pass
 
 ````
 
