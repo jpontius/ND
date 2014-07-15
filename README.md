@@ -1,6 +1,14 @@
 Work stuff
 ==
 
+Ansible command to add topspin users to all topspin hosts.
+129.74.143.27
+```bash
+ansible topspin -a 'sh /root/add_afs800 jpontius'
+```
+
+==
+
 Output all users on existing sytem to a file.
 
 ```bash
