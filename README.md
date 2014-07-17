@@ -4,6 +4,7 @@ Work stuff
 Ansible command to add topspin users to all topspin hosts.
 129.74.143.27
 ```bash
+su
 ansible topspin -a 'sh /root/add_afs800 jpontius'
 ```
 
