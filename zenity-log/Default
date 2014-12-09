@@ -85,7 +85,7 @@ zenity --height 300 --width 400 --info --text 'Thanks, NMR Staff has been notifi
   
 fi
 
-printf '%b\n' "$DATE","$totaltime","$USER","$account","$nuc","$solvent","$vt","$comment2" >> /log/user.log
+printf '%b\n' "$DATE,$totaltime,$USER,$account,$nuc,$solvent,$vt,$comment2" >> /log/user.log
 printf '%b\n' "$DATE $totaltime $USER $account $nuc $solvent VT=$vt $comment2" >> /log/user2.log
 printf "No one is using the NMR  :(" > /log/in.log
 scp /log/*.log justin@nmr800-ups.campus.nd.edu:/home/justin/log &
