@@ -73,8 +73,9 @@ if [ "$problem" = 0 ]; then
  
  comment=$(zenity --height 300 --width 400 --entry --title="Comments" --text="Please enter a brief discription of the problem");
  comment2=$(echo -e "$comment");
-# echo "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" | nail -A gmail -s "Log notification from Bruker 500" -a /log/user.log -S ttycharset=iso-8859-1 jpontius@nd.edu &
- /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Log notification from Bruker 500" --body "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" --attach /log/user.log -n --silent 3 & 
+# echo "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" | nail -A gmail -s "Log notification from $HOSTNAME" -a /log/user.log -S ttycharset=iso-8859-1 jpontius@nd.edu &
+ wget -q	 --output-document=/tmp/cam1-output.jpg http://www3.nd.edu/~jpontius/camera/assets/cam1-output.jpg
+ /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Log notification from $HOSTNAME" --body "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" --attach /log/user.log -n --silent 3 --attach /tmp/cam1-output.jpg & 
 zenity --height 300 --width 400 --info --text 'Thanks, NMR Staff has been notified of your issue.'
 
  else
@@ -91,8 +92,10 @@ scp /log/*.log justin@nmr800-ups.campus.nd.edu:/home/justin/log &
 
 
 if [ "$account" -ne "$useracct" ]; then
-	#echo "User $USER entered a different account number.  $account vs $useracct" | nail -A gmail -s "Log notification from Bruker 500" jpontius@nd.edu &
-	/usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Account notification from Bruker 500" --body "User $USER entered a different account number.  $account vs $useracct" &
+	#echo "User $USER entered a different account number.  $account vs $useracct" | nail -A gmail -s "Log notification from $HOSTNAME" jpontius@nd.edu &
+	wget -q  --output-document=/tmp/cam1-output.jpg http://www3.nd.edu/~jpontius/camera/assets/cam1-output.jpg
+	/usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --attach /tmp/cam1-output.jpg --h-Subject "Account notification from $HOSTNAME" --body "User $USER entered a different account number.  $account vs $useracct" &
+	
 fi
 
 
