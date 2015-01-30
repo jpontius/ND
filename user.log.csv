@@ -1237,7 +1237,7 @@ Date,Inst. Time,User,Account,Nucleus,Solvent,VT,Comment
 12-05-2014 15:51,(00:04),pcui,3414043503010001,1H,Benzene-d6,No,None
 12-05-2014 16:47,(00:31),rgraff,3414033503010001,1H,Chloroform-d,No,None
 12-05-2014 16:58,(00:10),svilanov,3414043503010001,1H|31P|19F,Chloroform-d,No,None
-12-05-2014 17:32,(00:30),bcarbain,2615093503020000,1H|13C,DMSO,No,spin pending for 30 sec, could not get ro on to work. ro on worked after when putting back nmr tube in isx 1
+12-05-2014 17:32,(00:30),bcarbain,2615093503020000,1H|13C,DMSO,No,spin pending for 30 sec. could not get ro on to work. ro on worked after when putting back nmr tube in isx 1
 12-05-2014 17:50,(00:04),mnakata,2017733503020000,1H,,,None
 12-05-2014 18:28,(00:23),wliu5,2018923503020000,1H,Chloroform-d,No,None
 12-05-2014 18:57,(00:26),mgrigalu,2018973503020000,1H|13C,Chloroform-d,No,None
