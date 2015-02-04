@@ -15,4 +15,4 @@ cat users.csv | cut -d "," -f1 > user_list
 grep --invert-match -wFf user_list system_users > not_in_billing.txt
 
 # Check if files are different.
-cmp --silent not_in_billing.txt not_in_billing.txt.old || /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Notification from $HOSTNAME" --body "Billing users are different from actual users on $HOSTNAME." --attach-type "text/plain" --attach /billing//billing/User_Management/not_in_billing.txt -n --silent 3
+cmp --silent not_in_billing.txt not_in_billing.txt.old || /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Notification from $HOSTNAME" --body "Billing users are different from actual users on $HOSTNAME." --attach-type "text/plain" --attach /billing/User_Management/not_in_billing.txt -n --silent 3
