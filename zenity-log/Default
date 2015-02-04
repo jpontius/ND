@@ -1,9 +1,10 @@
 #!/bin/sh
 
+outDate=$(date +"%D %T")
+
+
 PATH="/usr/bin:$PATH:/bin:/usr/bin"
 OLD_IFS=$IFS
-
-outDate=$(date +"%D %T")
 
 gdmwhich () {
   COMMAND="$1"
@@ -27,17 +28,21 @@ if [ "x$SESSREG" != "x" ] ; then
 fi
 
 ## Added to update dashboard by J. Pontius.
-#curl -d '{ "auth_token": "8675309", "text": "No user logged in."}' \http://clarkgate2.chem.nd.edu:3030/widgets/B-500 || true
+#curl -d '{ "auth_token": "8675309", "text": "No user logged in."}' \http://clarkgate2.chem.nd.edu:3030/widgets/B-400 || true
+
 
 ## Sync users data to server.
 touch "/opt/nmrdata/$USER"
-/usr/bin/rsync -r -av  --ignore-existing -z "/opt/nmrdata/$USER" "root@synology.chem.nd.edu:/volume1/web/nmr-data/Bruker\ 500/" &
-/usr/bin/ssh root@synology.chem.nd.edu "touch /volume1/web/nmr-data/Bruker\ 500" &
+/usr/bin/rsync -r -av  --bwlimit=10000 --ignore-existing -z "/opt/nmrdata/$USER" "root@synology.chem.nd.edu:/volume1/web/nmr-data/Bruker\ 400/" &
+/usr/bin/ssh root@synology.chem.nd.edu "touch /volume1/web/nmr-data/Bruker\ 400" &
+
 
 echo $USER,$outDate >> /billing/gdm.log
 printf %"s\n" >> /billing/gdm.log
 
-#!/bin/sh
+#####################################
+## Added for USER LOG by jpontius ###
+#####################################
 
 DATE=$(date +"%m-%d-%Y %H:%M")
 #TIME=$(date +"%H:%M")
@@ -47,8 +52,10 @@ DATE=$(date +"%m-%d-%Y %H:%M")
 #       exit 0
 #fi
 
+wget -q --output-document=/tmp/cam1-output.jpg http://www3.nd.edu/~jpontius/camera/assets/cam1-output.jpg &
+
 useracct=$(wget -qO - http://www3.nd.edu/~jpontius/users/users.csv | grep "$USER" | cut -d',' -f3)
-totaltime=$(last | grep $USER | head -n 1 | awk '{ print $10; }')
+totaltime=$(last | grep "$USER" | head -n 1 | awk '{ print $10; }')
 account=$(zenity --height 300 --width 400 --entry --title="Account Number" --text="Enter your FOP Account" --entry-text "$useracct"  )
 nuc=$(zenity --height 300 --width 400 --list --checklist \
         --title="Nuclus" --column "Select" --column "NUC" \
@@ -57,8 +64,8 @@ nuc=$(zenity --height 300 --width 400 --list --checklist \
 
 solvent=$(zenity --height 300 --width 400 --list --checklist \
         --title="Solvent" --column "Select" --column "Solvent" \
-        TRUE Chloroform-d FALSE Acetone-d6 FALSE Benzene-d6 FALSE DCM FALSE Toluene-d8 FALSE D2O FALSE DMSO FALSE Other )
-	#| nawk '{print substr($0,1,23)}' )
+        TRUE Chloroform-d FALSE Acetone-d6 FALSE Benzene-d6 FASE DCM FALSE Toluene-d8 FALSE D2O FALSE DMSO FALSE Other )
+#	| nawk '{print substr($0,1,23)}' )
 
 zenity --height 300 --width 400 --question --text="\\r Did you use Variable Temperature? \\r\\r OK=Yes \\r Cancel=No"; vt=$?
 
@@ -73,30 +80,24 @@ if [ "$problem" = 0 ]; then
  
  comment=$(zenity --height 300 --width 400 --entry --title="Comments" --text="Please enter a brief discription of the problem");
  comment2=$(echo -e "$comment");
-# echo "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" | nail -A gmail -s "Log notification from $HOSTNAME" -a /log/user.log -S ttycharset=iso-8859-1 jpontius@nd.edu &
- wget -q	 --output-document=/tmp/cam1-output.jpg http://www3.nd.edu/~jpontius/camera/assets/cam1-output.jpg
- /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Log notification from $HOSTNAME" --body "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2" --attach /log/user.log -n --silent 3 --attach /tmp/cam1-output.jpg & 
-zenity --height 300 --width 400 --info --text 'Thanks, NMR Staff has been notified of your issue.'
+ /usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Log notification from $HOSTNAME" --attach /tmp/cam1-output.jpg --body "There was a problem on $HOSTNAME $DATE, $totaltime, $USER, $account, $nuc, $solvent, $vt, $comment2"  --attach-type "text/plain" --attach /log/user.log -n --silent 3 &
+ zenity --height 300 --width 400 --info --text 'Thanks, NMR Staff has been notified of your issue.'
 
  else
-   #statements
-   #problem=0;
   comment2='None';
-  
 fi
 
-printf '%b\n' "$DATE,$totaltime,$USER,$account,$nuc,$solvent,$vt,$comment2" >> /log/user.log
-printf '%b\n' "$DATE $totaltime $USER $account $nuc $solvent VT=$vt $comment2" >> /log/user2.log
-printf "No one is using the NMR  :(" > /log/in.log
+printf '%b\n' "$DATE","$totaltime","$USER","$account","$nuc","$solvent","$vt","$comment2" >> /log/user.log
+printf '%b\n' "$DATE $totaltime $USER $account $nuc $solvent VT=$vt $comment2" >> /log/user-400.log
+printf '%b\n' "$DATE $totaltime $USER $account $nuc $solvent VT=$vt $comment2" >> "/log/$HOSTNAME.log"
+
 scp /log/*.log justin@nmr800-ups.campus.nd.edu:/home/justin/log &
+scp /log/*.log justin@nmr400b-log.campus.nd.edu:/home/justin/log &
 
 
 if [ "$account" -ne "$useracct" ]; then
-	#echo "User $USER entered a different account number.  $account vs $useracct" | nail -A gmail -s "Log notification from $HOSTNAME" jpontius@nd.edu &
-	wget -q  --output-document=/tmp/cam1-output.jpg http://www3.nd.edu/~jpontius/camera/assets/cam1-output.jpg
-	/usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --attach /tmp/cam1-output.jpg --h-Subject "Account notification from $HOSTNAME" --body "User $USER entered a different account number.  $account vs $useracct" &
-	
+        #echo "User $USER entered a different account number.  $account vs $useracct" | nail -A gmail -s "Account notification from Bruker 400" jpontius@nd.edu &
+	/usr/local/bin/swaks --from nmr@nd.edu --to jpontius@nd.edu --h-Subject "Account notification from $HOSTNAME" --attach /tmp/cam1-output.jpg --body "User $USER entered a different account number.  $account vs $useracct" &
 fi
-
 
 exit 0
