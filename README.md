@@ -30,3 +30,11 @@ while read u; do
   /home/justin/add_afs800 $u
 done < users.txt
 ```
+
+Disable screensaver locking for all users
+```bash
+gconftool-2 --direct \
+--config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool \
+--set /apps/gnome-screensaver/lock_enabled false
+```
+
