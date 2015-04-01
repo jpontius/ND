@@ -11,7 +11,7 @@ now = time.strftime("%H:%M %x")
 
 url = "https://www3.nd.edu/~nmr/scheduling/"
 user = "jpontius"
-pwd = "jesus4Hotrod"
+pwd = ""
 cj = cookielib.CookieJar()
 br = mechanize.Browser()
 br.set_handle_robots(False)
