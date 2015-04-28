@@ -69,3 +69,40 @@ cd /afs/nd.edu/user/$USER/
 pwd
 ls
 ```
+
+krb5.conf
+```
+[logging]
+    default = FILE:/var/log/krb5.log
+
+
+[libdefaults]
+	default_realm = ND.EDU
+	default_tkt_enctypes = des3-hmac-sha1 des-cbc-crc
+	default_tgs_enctypes = des3-hmac-sha1 des-cbc-crc 
+
+	dns_lookup_realm = true
+	dns_lookup_kdc = true
+	allow_weak_crypto = true
+
+[realms]
+   ND.EDU = {
+     kdc = KERBEROS.ND.EDU:88
+     kdc = KERBEROS-1.ND.EDU:88
+     kdc = KERBEROS-2.ND.EDU:88
+     admin_server = KERBEROS.ND.EDU:749
+     default_domain = ND.EDU
+   }
+
+[domain_realm]
+    .nd.edu = ND.EDU
+    nd.edu = ND.EDU
+
+[appdefaults]
+    pam = {
+        ticket_lifetime = 30d
+        renew_lifetime = 30d
+        forwardable = true
+        debug = true
+   }
+```
