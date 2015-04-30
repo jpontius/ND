@@ -1,16 +1,22 @@
 ##Get packages
 
-###i386
+###i386 v5
 ````
 http://elders.princeton.edu/data/puias/unsupported/5/i386/pam_mount-1.2-1.PU_IAS.5.i386.rpm
 http://elders.princeton.edu/data/puias/unsupported/5/i386/libHX-1.25-1.PU_IAS.5.i386.rpm
 ````
 
-###x64
+###x64 v5
 ````
 http://elders.princeton.edu/data/puias/unsupported/5/x86_64/libHX-1.25-1.PU_IAS.5.x86_64.rpm
 http://elders.princeton.edu/data/puias/unsupported/5/x86_64/pam_mount-1.2-1.PU_IAS.5.x86_64.rpm
 ````
+###x64 v6
+```
+http://archives.fedoraproject.org/pub/archive/fedora/linux/updates/12/x86_64/libHX-3.6-1.fc12.x86_64.rpm
+http://archives.fedoraproject.org/pub/archive/fedora/linux/updates/12/x86_64/pam_mount-2.5-1.fc12.x86_64.rpm
+```
+
 
 ###Install packages x86_64
 ````
