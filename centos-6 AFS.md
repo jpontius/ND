@@ -113,3 +113,69 @@ krb5.conf
         debug = true
    }
 ```
+
+Edit pam files to allow kerberos login
+system-auth
+```
+#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
+auth        required      pam_env.so
+auth        sufficient    pam_fprintd.so
+auth        sufficient    pam_unix.so nullok try_first_pass
+auth        requisite     pam_succeed_if.so uid >= 500 quiet
+auth        sufficient    pam_sss.so use_first_pass
+auth        sufficient    pam_krb5.so use_first_pass
+auth        required      pam_deny.so
+
+account     required      pam_unix.so broken_shadow
+account     sufficient    pam_localuser.so
+account     sufficient    pam_succeed_if.so uid < 500 quiet
+account     [default=bad success=ok user_unknown=ignore] pam_sss.so
+account     [default=bad success=ok user_unknown=ignore] pam_krb5.so
+account     required      pam_permit.so
+
+password    requisite     pam_cracklib.so try_first_pass retry=3 type=
+password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok
+password    sufficient    pam_sss.so use_authtok
+password    sufficient    pam_krb5.so use_authtok
+password    required      pam_deny.so
+
+session     optional      pam_keyinit.so revoke
+session     required      pam_limits.so
+session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session     required      pam_unix.so
+session     optional      pam_sss.so
+session     optional      pam_krb5.so
+```
+
+gdm
+```
+#%PAM-1.0
+auth     [success=done ignore=ignore default=bad] pam_selinux_permit.so
+auth       required    pam_succeed_if.so user != root quiet
+auth       required    pam_env.so
+auth       substack    system-auth
+auth	   sufficient  pam_krb5.so
+auth       optional    pam_gnome_keyring.so
+account    required    pam_nologin.so
+account    include     system-auth
+password   include     system-auth
+session    required    pam_selinux.so close
+session    required    pam_loginuid.so
+session    optional    pam_console.so
+session    required    pam_selinux.so open
+session    optional    pam_keyinit.so force revoke
+session    required    pam_namespace.so
+session    optional    pam_gnome_keyring.so auto_start
+session    include     system-auth
+```
+
+Then update authconfig
+```
+If you set up kerberos through authconfig it will do this for you.
+
+Alternatively, since you've already set things up manually in system-auth, running
+
+authconfig --updateall
+```
