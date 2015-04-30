@@ -70,6 +70,13 @@ pwd
 ls
 ```
 
+Disable User List on RHEL6 / CentOS6 Login Window
+```
+# gconftool-2 --direct --config-source=xml:readwrite:/etc/gconf/gconf.xml.defaults --type bool --set /apps/gdm/simple-greeter/disable_user_list true
+```
+
+
+
 krb5.conf
 ```
 [logging]
