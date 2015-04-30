@@ -1,0 +1,87 @@
+#!/bin/bash
+# Add a VnmrJ user to the system (nmr600, spin, lada)
+# This script will add the user to the /etc/passwd, 
+# create user home directory and afs links to 
+# user's afs directory and user's afs nmr data directory 
+#
+# Usage: add_afsv netid
+
+ROOT_UID=0                # Only users with $UID 0 have root privileges.
+AFS_NMRDIR=Private/NMR    # Default directory for storage user's nmr data
+UserShell=/bin/tcsh       # /bin/csh or /bin/tcsh shells are required by Varian
+NmrGroup=nmr              # default group for VnmrJ users
+
+
+# Only root can run this script
+
+if [ "$UID" -ne "$ROOT_UID" ] 
+  then 
+      echo "Error: Must be root to run this script"
+      exit
+fi    
+
+# Check that the command line argument (user's NetID) is present (non-empty)
+if [ $# -ne 1 ]
+   then 
+        echo "Error: Usage: add_afsv NetID"
+	exit
+   else
+        NetID="$1"
+fi	
+
+# Check if the user was already created
+
+/bin/grep -wq $NetID /etc/passwd >> /dev/null
+if [ "$?" -eq 0 ]  
+   then
+       echo "Error: NetID: <" $NetID "> already exists in /etc/passwd."
+       exit
+fi       
+
+# Check if the user home directory exits, this is needed to ensure
+# that nothing has been left on the system if the user's account has 
+# been corrupted
+
+if [ -e /home/"$NetID" ]
+   then
+   	echo "Error: Home directory for user <" $NetID "> exists." 
+	echo "Please delete it (/home/$NetID) and run this script again"
+	exit
+fi	
+
+
+/bin/grep -w "$NetID" /afs/nd.edu/common/etc/passwd > /tmp/afsaccnt.$$
+
+# Test that the NetID is the valid University NetID
+if [ "$?" -ne 0 ]     
+   then 
+       /bin/rm -f /tmp/afsaccnt.$$
+       echo "Error: NetID: <" $NetID "> is not valid. Please specify a valid Notre Dame NetID."
+       exit
+fi       
+
+# Finaly add user to /etc/passwd, change the home directory and the shell
+	cat /tmp/afsaccnt.$$ >> /etc/passwd
+	/usr/sbin/usermod -d /home/"$NetID" -s "$UserShell" "$NetID"
+        /usr/sbin/pwconv
+
+# Create user home directory and afs links
+ 
+	cp -r /etc/skel /home/"$NetID"
+	mkdir /home/"$NetID"/vnmrsys
+	mkdir /home/"$NetID"/vnmrsys/data
+	
+	AFSDir=$(gawk -F: '{ print $6 }' /tmp/afsaccnt.$$)
+        UserGroup=$(gawk -F: '{ print $4 }' /tmp/afsaccnt.$$)
+	
+	ln -s "$AFSDir" /home/"$NetID"/afs
+	ln -s "$AFSDir"/"$AFS_NMRDIR" /home/"$NetID"/vnmrsys/data/afsnmr
+	
+# Change all user permissions
+	chown -Rf "$NetID":"$UserGroup" /home/"$NetID"
+	chown -Rf "$NetID":"$NmrGroup" /home/"$NetID"/vnmrsys
+	
+	rm -rf /tmp/afsaccnt.$$
+	
+	echo "User <" $NetID "> has been added to the system."
+	echo "Please run VnmrJ Admin to create all VnmrJ files."
