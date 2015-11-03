@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DISPLAY=:0.0
+
 DAYOFWEEK=$(date +"%u")
 time=$(date +%k%M)
 
