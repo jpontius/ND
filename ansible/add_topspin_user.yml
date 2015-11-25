@@ -1,0 +1,61 @@
+---
+- name: "set netid"
+  hosts:
+    - topspin
+    - localhost
+  vars_prompt:
+    - name: "netid"
+      prompt: "Enter new users NetID"
+      private: no
+  tasks:
+  # have to do this so other 'plays' have access to this variable.
+    - set_fact:
+        nd_netid: "{{netid}}"
+
+- name: "add users to topspin workstations"
+  hosts: topspin
+  remote_user: root
+  tasks:
+    - name: "add users to topspin workstations"
+      shell: /root/add_afs800 {{nd_netid}} >> ansible.log chdir=/root
+
+- name: "add user to scheduling system .htgroup"
+  hosts: localhost
+  remote_user: justin
+  tasks:
+    - name: "add user to htgroup file"
+      lineinfile:
+        create: yes
+        backup: yes
+        dest: "/tmp/nmr-netfile/www/.htgroup"
+        line: "userlist: {{nd_netid}}"
+
+- name: "add user to scheduling database"
+  hosts: localhost
+  remote_user: justin
+  tasks:
+    - name: "run python script to add user to scheduling"
+      command: /home/justin/Dropbox/ansible/py-ND-user-info.py {{nd_netid}}
+
+- name: "email new users"
+  hosts: localhost
+  tasks:
+    - name: email users
+      local_action: mail
+        host='mail-mx3-prod-v.cc.nd.edu'
+        port=25
+        subject="NMR Account"
+        body='Hello,  User {{nd_netid}} has been added to the Bruker NMR systems'
+        from="nmr@nd.edu"
+        to='{{ nd_netid }}@nd.edu'
+        # cc="jpontius@nd.edu (Justin Pontius)"
+        charset=utf8
+
+    - name: Slack
+      local_action:
+        module: slack
+        token: T04BED584/B0F7DUN3B/6yek06oFy6QxVttdMmW0sF6a
+        msg: "{{ nd_netid }} has been added to the Bruker NMR systems."
+        #color: good
+        channel: "#general"
+        link_names: 1
