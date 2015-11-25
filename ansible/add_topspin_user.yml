@@ -27,7 +27,7 @@
       lineinfile:
         create: yes
         backup: yes
-        dest: "/tmp/nmr-netfile/www/.htgroup"
+        dest: "/mnt/nmr-netfile/www/.htgroup"
         line: "userlist: {{nd_netid}}"
 
 - name: "add user to scheduling database"
@@ -35,10 +35,12 @@
   remote_user: justin
   tasks:
     - name: "run python script to add user to scheduling"
-      command: /home/justin/Dropbox/ansible/py-ND-user-info.py {{nd_netid}}
+      command: /home/justin/ND/ansible/py-ND-user-info.py {{nd_netid}}
 
 - name: "email new users"
   hosts: localhost
+  vars_files:
+    - /home/justin/ND/ansible/vars/slack.yml
   tasks:
     - name: email users
       local_action: mail
@@ -54,7 +56,7 @@
     - name: Slack
       local_action:
         module: slack
-        token: T04BED584/B0F7DUN3B/6yek06oFy6QxVttdMmW0sF6a
+        token: {{ slack_token }}
         msg: "{{ nd_netid }} has been added to the Bruker NMR systems."
         #color: good
         channel: "#general"
