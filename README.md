@@ -38,3 +38,11 @@ gconftool-2 --direct \
 --set /apps/gnome-screensaver/lock_enabled false
 ```
 
+Open all files in a single browser
+```bash
+gconftool-2 --direct \
+> --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool \
+> --set /apps/nautilus/preferences/always_use_browser true
+
+```
+
