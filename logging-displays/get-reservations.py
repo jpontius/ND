@@ -4,14 +4,15 @@ import urllib2
 import cookielib
 import re
 import sys
-import markup
+#import markup
 import time
 
 now = time.strftime("%H:%M %x")
 
 url = "https://www3.nd.edu/~nmr/scheduling/"
+#url = "https://www3.nd.edu/~jpontius/scheduling/"
 user = "jpontius"
-pwd = ""
+pwd = "Wildsoda70"
 cj = cookielib.CookieJar()
 br = mechanize.Browser()
 br.set_handle_robots(False)
@@ -56,7 +57,7 @@ tags = soup.find_all(href=re.compile("resource=6"))
 # for eachtags in tags:
 # 	print eachtags.string
 # 	#result = result + tags[eachtags]
-file500 = open("/home/justin/reservations/500.txt", "w")
+file500 = open("/home/pi/reservations/500.txt", "w")
 file500.write('Bruker 500 - Upcoming Reservations'+'\n')
 file500.write('Last update: '+now +'\n')
 for eachtags in tags:
@@ -66,7 +67,7 @@ file500.close()
 
 print ''
 tags = soup.find_all(href=re.compile("resource=5"))
-file400 = open("/home/justin/reservations/400.txt", "w")
+file400 = open("/home/pi/reservations/400.txt", "w")
 file400.write('Bruker 400 - Upcoming Reservations'+'\n')
 file400.write('Last update: '+now +'\n')
 for eachtags in tags:
@@ -80,7 +81,7 @@ tags = soup.find_all(href=re.compile("resource=4"))
 #
 # for eachtags in tags:
 # 	print eachtags.string
-filev600 = open("/home/justin/reservations/v600.txt", "w")
+filev600 = open("/home/pi/reservations/v600.txt", "w")
 filev600.write('Varian 600 - Upcoming Reservations'+'\n')
 filev600.write('Last update: '+now +'\n')
 for eachtags in tags:
@@ -94,7 +95,7 @@ tags = soup.find_all(href=re.compile("resource=3"))
 #
 # for eachtags in tags:
 #  	print eachtags.string
-filev500 = open("/home/justin/reservations/v500.txt", "w")
+filev500 = open("/home/pi/reservations/v500.txt", "w")
 filev500.write('Varian 500 - Upcoming Reservations'+'\n')
 filev500.write('Last update: '+now +'\n')
 for eachtags in tags:
@@ -107,7 +108,7 @@ tags = soup.find_all(href=re.compile("resource=7"))
 #
 # for eachtags in tags:
 # 	print eachtags.string
-file800 = open("/home/justin/reservations/800.txt", "w")
+file800 = open("/home/pi/reservations/800.txt", "w")
 file800.write('Bruker 800 - Upcoming Reservations'+'\n')
 file800.write('Last update: '+now +'\n')
 for eachtags in tags:
@@ -120,7 +121,7 @@ tags = soup.find_all(href=re.compile("resource=1"))
 #
 # for eachtags in tags:
 #         print eachtags.string
-file300 = open("/home/justin/reservations/300.txt", "w")
+file300 = open("/home/pi/reservations/300.txt", "w")
 file300.write('JEOL/SS 300 - Upcoming Reservations'+'\n')
 file300.write('Last update: '+now +'\n')
 for eachtags in tags:
