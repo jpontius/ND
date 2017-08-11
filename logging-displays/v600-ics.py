@@ -12,6 +12,7 @@ with open('/tmp/v600.ics', 'wb') as out_file:
 del response
 #################################################################
 now = arrow.now()#.format('YYYY-MM-DDTHH:mm:ssZZ')# get time now
+now_text = arrow.now().format('HH:mm MM-DD-YYYY')
 g = open('/tmp/v600.ics','rb')# open ics file for reading
 gcal = Calendar.from_ical(g.read()) #read ics file
 #print "starting"

@@ -13,6 +13,7 @@ del response
 #################################################################
 
 now = arrow.now()# get time now
+now_text = arrow.now().format('HH:mm MM-DD-YYYY')
 g = open('/tmp/400.ics','rb')# open ics file for reading
 gcal = Calendar.from_ical(g.read())#read ics file
 #print "starting"
