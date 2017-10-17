@@ -1,0 +1,125 @@
+#!/bin/bash
+# Add a Topspin user to the system (nmr800a, nmr800, nmr400, etc)
+# This script will add the user to the /etc/passwd, 
+# create user home directory and afs links to 
+# user's afs directory and user's afs nmr data directory 
+# usage add_afsv netid
+
+ROOT_UID=0                	# Only users with $UID 0 have root privileges.
+UserShell=/bin/bash       	# /bin/bash - is a default Linux shell
+TopspinHomeDir=/nmrdata		# Topspin Home Directory 
+NmrDataInit=/nmrdata/st.tar 	# Tar archive to create initial nmr experiemnts (H1,C13)
+
+# Only root can run this script
+if [ "$UID" -ne "$ROOT_UID" ] 
+  then 
+      echo "Error: Must be root to run this script"
+      exit
+fi    
+
+# Test whether command line (user's NetID) is present (non-empty)
+if [ $# -ne 1 ]
+   then 
+        echo "Error: Usage: add_afs800 NetID"
+	exit
+   else
+        NetID="$1"
+fi	
+
+# Test whether user was already created
+
+/bin/grep -wq "$NetID": /etc/passwd >> /dev/null
+if [ "$?" -eq 0 ]  
+   then
+       echo "Error: NetID: <" $NetID "> already exists in /etc/passwd."
+       exit
+fi       
+
+/bin/grep -w "$NetID": /afs/nd.edu/common/etc/passwd > /tmp/afsaccnt.$$
+
+# Test that the NetID is the valid University NetID
+if [ "$?" -ne 0 ]     
+   then 
+       /bin/rm -f /tmp/afsaccnt.$$
+       echo "Error: NetID: <" $NetID "> is not valid. Please specify a valid Notre Dame NetID."
+       exit
+fi       
+
+# Finaly add user to /etc/passwd, change the home directory and the shell
+	cat /tmp/afsaccnt.$$ >> /etc/passwd
+	/usr/sbin/usermod -d /home/"$NetID" -s "$UserShell" "$NetID"
+        /usr/sbin/pwconv
+        UserGroup=$(gawk -F: '{ print $4 }' /tmp/afsaccnt.$$)
+
+# Check that all required directories do exist and them create if needed
+# Assume that extra files for Topspin, like .topspin-xxx, deskot icon and 
+# .xSession-default (kde) have been added to /etc/skel
+
+if [ ! -e /home/"$NetID" ]
+   then 
+	cp -r /etc/skel /home/"$NetID"
+fi
+
+# Add user folders and preferences to Topspin. By JUSTIN.
+
+  mkdir -p /home/"$NetID"/.topspin-${HOSTNAME}/prop
+  echo "1=/home/$NetID/afs/Private" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop
+  echo "0=/nmrdata/$NetID" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop
+  echo "2=/home/$NetID/netfile" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop
+  echo "TOPSPIN_LIC_SHOWN=y" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/globals.prop
+  echo "AUTO_LOCK_DISPLAY=yes" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/globals.prop
+  echo "LOCK_X=1548" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/lockLayout.prop
+  echo "LOCK_FLOAT=TRUE" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/lockLayout.prop
+  echo "LOCK_HEIGHT=1108" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/lockLayout.prop
+  echo "LOCK_WIDTH=362" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/lockLayout.prop
+  echo "LOCK_Y=25" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/lockLayout.prop
+  echo "MONITORS_ENABLED=SPOOLER TIME TE FID ACQ LOCK POWCHK BSMS BSMSTEMP BSMS_STATUS ACB" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  echo "UI2_TOOLBAR_ONE_ROW=no" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  echo "SHIM_COIL_UNIT=Celsius" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  echo "SHOW_FLOWGUI_DIA=no" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  echo "ENABLE_FLOWBARS=yes" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  echo "ENABLE_UI2_31=yes" >> /home/"$NetID"/.topspin-${HOSTNAME}/prop/layout.prop
+  sed '/examdata/d' /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop > /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop.SED
+  mv /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop.SED /home/"$NetID"/.topspin-${HOSTNAME}/prop/browsedir2_Local.prop
+  chown -R "$NetID":"$UserGroup" /home/"$NetID"/.topspin-${HOSTNAME}/prop 
+
+
+
+
+# Check that nmr data for topspin are created and copy required nmr experiments.
+# If user's data do exists, no nmr data will be copied  
+
+if [ ! -e "$TopspinHomeDir"/"$NetID" ]
+   then
+   	mkdir "$TopspinHomeDir"/"$NetID"
+	
+	if [ -e "$NmrDataInit" ]
+	   then 
+	   	CurrentDir=$(pwd)
+		cd "$TopspinHomeDir"/"$NetID"
+		tar xvf "$NmrDataInit"
+		cd "$CurrentDir"
+	fi	
+	
+	chown -R "$NetID":"$UserGroup" "$TopspinHomeDir"/"$NetID"	
+fi
+	 
+	AFSDir=$(gawk -F: '{ print $6 }' /tmp/afsaccnt.$$)
+        UserGroup=$(gawk -F: '{ print $4 }' /tmp/afsaccnt.$$)
+
+# Check that all required links do exist and create them if needed
+
+if [ ! -L /home/"$NetID"/afs ]
+    then	
+        ln -s "$AFSDir" /home/"$NetID"/afs
+fi
+
+if [ ! -L /home/"$NetID"/data ]
+    then	
+        ln -s "$TopspinHomeDir"/"$NetID" /home/"$NetID"/data
+fi
+
+# Change all user permissions
+	chown -R "$NetID":"$UserGroup" /home/"$NetID"
+	rm -rf /tmp/afsaccnt.$$
+	echo "User <" $NetID "> has been added to the system."
