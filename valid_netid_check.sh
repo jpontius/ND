@@ -19,3 +19,5 @@ for i in `cat netid.tmp`; do
         echo $i >> not-valid.txt
     fi
 done
+
+## Then use "grep -vFf not-valid.txt users.csv" to see non-valid netids
